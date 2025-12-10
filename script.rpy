@@ -1,72 +1,133 @@
-﻿
 
-# Declare characters used by this game. 
-
+# CHARACTERS
 define e = Character("DIGITAL KAZI")
 define o = Character("Okello Paul")
 
 
-# The game starts here.
+# VARIABLES
+
+default selected_character = None
+default question = ""
+default api_response = ""
+
+# API CALL (PYTHON)
+init python:
+    import requests
+    import json
+
+    def ask_backend(persona_type, persona_name, question):
+        url = "http://localhost:4001/api/v1/story/generate_story"
+
+        headers = {
+            "accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer YOUR_KEY_HERE"
+        }
+
+        payload = {
+            "persona_type": persona_type,
+            "persona_name": persona_name,
+            "question": question
+        }
+
+        try:
+            r = requests.post(url, headers=headers, json=payload)
+            r.raise_for_status()
+            data = r.json()
+
+            return data.get("message", "No response from server.")
+        except Exception as err:
+            return f"Error calling API: {err}"
+
+
+# SCREENS
+screen character_select():
+    frame:
+        padding 20  
+        vbox:
+            text "Choose a character"
+
+            textbutton "Okello Paul" action [SetVariable("selected_character", "Okello Paul"), Return(True)]
+            textbutton "Digital Kazi" action [SetVariable("selected_character", "DIGITAL KAZI"), Return(True)]
+
+screen question_screen():
+    frame:
+        padding 20
+        vbox:
+            text "Ask a question:"
+            input value Variable("question")
+            textbutton "Submit" action Return(question)
+
+
+# GAME START
 
 label start:
 
     scene bg character choose
-    e "Welcome to Fair digital where all your questions are answered"
-    
-    scene bg character question
-    e "ask a question"
+    e "Welcome to Fair Digital. Your questions will be answered."
+
+    # Choose character
+    call screen character_select
+
+    e "You selected: [selected_character]"
+
+    # Ask a question
+    call screen question_screen
+    $ user_question = _return
+
+    e "You asked: [user_question]"
+    e "Let me check with the server..."
+
+    # Map Ren'Py selection → API expected fields
+    if selected_character == "Okello Paul":
+        $ persona_type = "Gig Workers"
+        $ persona_name = "Okello Paul"
+    else:
+        $ persona_type = "Digital Advisors"
+        $ persona_name = "Digital Kazi"
+
+    # --- API CALL ---
+    $ api_response = ask_backend(persona_type, persona_name, user_question)
+
+    e "Here is your answer:"
+    e "[api_response]"
+
+    jump choices
 
 
-    scene bg gig worker
-
-scene bg choices
+# MENU 
 label choices:
 
-    # These display the choices
-    menu :
+    scene bg choices
 
+    menu:
         "What is the gig economy?":
             jump choices1_a
 
-        "What is digital kazi":
-
+        "What is Digital Kazi?":
             jump choices1_b 
-        
+
 label choices1_a:
 
-
-
-    scene bg what gig
-
+    scene bg what_gig
     e "Here is some info on the gig economy."
-   
 
+    scene bg gig_worker
+    e "Meet Okello Paul."
+    e "A delivery driver from Kampala, Uganda."
 
-    scene bg gig worker
-    e "Meet Okello Paul ."
-    e "A delivery driver from Kampala Uganda ."
-    
-   
-    scene bg bus stop
+    scene bg bus_stop
     show musa
-    o "I wonder what the gig economy is ?."
+    o "I wonder what the gig economy is?"
+    o "I'm a delivery driver."
+    o "Does that mean I am a gig worker?"
 
-    o "I mean im a delivery driver"
-    o "does that mean i am a gig worker?"
-
-            #write common code to stop a from going to b 
-
-
+    return
 
 label choices1_b:
 
     scene bg desk  
-
-    e "Digital Kazi is a game made to educate you baout publiv worker rights through a fun game."
-    e "With each question you are answered though a character and their story as a public worker."
-    e "So play and enjoy while understanding your work rights."
-            #try to change the text speed
-
-    # This ends the game.
+    e "Digital Kazi is a game made to educate you about public worker rights."
+    e "You learn through characters and their experiences as workers."
 
     return
