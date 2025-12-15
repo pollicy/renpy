@@ -4,61 +4,6 @@ define e = Character("DIGITAL KAZI")
 define o = Character("Okello Paul")
 
 
-# VARIABLES
-
-default selected_character = None
-default question = ""
-default api_response = ""
-
-# API CALL (PYTHON)
-init python:
-    import requests
-    import json
-
-    def ask_backend(persona_type, persona_name, question):
-        url = "http://localhost:4001/api/v1/story/generate_story"
-
-        headers = {
-            "accept": "application/json",
-            "Content-Type": "application/json",
-            "Authorization": "Bearer YOUR_KEY_HERE"
-        }
-
-        payload = {
-            "persona_type": persona_type,
-            "persona_name": persona_name,
-            "question": question
-        }
-
-        try:
-            r = requests.post(url, headers=headers, json=payload)
-            r.raise_for_status()
-            data = r.json()
-
-            return data.get("message", "No response from server.")
-        except Exception as err:
-            return f"Error calling API: {err}"
-
-
-# SCREENS
-screen character_select():
-    frame:
-        padding 20  
-        vbox:
-            text "Choose a character"
-
-            textbutton "Okello Paul" action [SetVariable("selected_character", "Okello Paul"), Return(True)]
-            textbutton "Digital Kazi" action [SetVariable("selected_character", "DIGITAL KAZI"), Return(True)]
-
-screen question_screen():
-    frame:
-        padding 20
-        vbox:
-            text "Ask a question:"
-            input value Variable("question")
-            textbutton "Submit" action Return(question)
-
-
 # GAME START
 
 label start:
@@ -70,28 +15,6 @@ label start:
     call screen character_select
 
     e "You selected: [selected_character]"
-
-    # Ask a question
-    call screen question_screen
-    $ user_question = _return
-
-    e "You asked: [user_question]"
-    e "Let me check with the server..."
-
-    # Map Ren'Py selection → API expected fields
-    if selected_character == "Okello Paul":
-        $ persona_type = "Gig Workers"
-        $ persona_name = "Okello Paul"
-    else:
-        $ persona_type = "Digital Advisors"
-        $ persona_name = "Digital Kazi"
-
-    # --- API CALL ---
-    $ api_response = ask_backend(persona_type, persona_name, user_question)
-
-    e "Here is your answer:"
-    e "[api_response]"
-
     jump choices
 
 
@@ -131,3 +54,4 @@ label choices1_b:
     e "You learn through characters and their experiences as workers."
 
     return
+
