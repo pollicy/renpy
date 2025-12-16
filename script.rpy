@@ -1,23 +1,13 @@
-﻿
-
 # Declare characters used by this game. 
 
-define e = Character("DIGITAL KAZI")
-define o = Character("Okello Paul")
+define e = Character("Okello Paul")
+define pov = Character("[povname]")
 
 
 # The game starts here.
 
 label start:
-
-    scene bg character choose
-    e "Welcome to Fair digital where all your questions are answered"
     
-    scene bg character question
-    e "ask a question"
-
-
-    scene bg gig worker
 
 scene bg choices
 label choices:
@@ -25,38 +15,45 @@ label choices:
     # These display the choices
     menu :
 
-        "What is the gig economy?":
+        "Okello Paul":
             jump choices1_a
 
-        "What is digital kazi":
+        "character 2":
 
             jump choices1_b 
+
+       
         
 label choices1_a:
 
 
-
-    scene bg what gig
-
-    e "Here is some info on the gig economy."
-   
-
-
-    scene bg gig worker
-    e "Meet Okello Paul ."
-    e "A delivery driver from Kampala Uganda ."
+    scene bg question_screen
+    $ povname = renpy.input("Ask a question", length=32)
     
+    # Splash screen AFTER question
+    call splashscreen
+
    
-    scene bg bus stop
-    show musa
-    o "I wonder what the gig economy is ?."
-
-    o "I mean im a delivery driver"
-    o "does that mean i am a gig worker?"
-
+    return
             #write common code to stop a from going to b 
 
+label splashscreen:
+    scene green
+    with Pause(1)
 
+    show text "LET ME THINK" with dissolve 
+    with Pause(5)    
+    
+    hide text with dissolve
+    with Pause (1)
+
+    show text "ANSWER LOADING" with dissolve 
+    with Pause(5)    
+    
+    hide text with dissolve
+    with Pause (1)
+
+    return
 
 label choices1_b:
 
@@ -69,4 +66,6 @@ label choices1_b:
 
     # This ends the game.
 
-    return
+    return﻿
+
+
