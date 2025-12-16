@@ -1,74 +1,85 @@
-The purpose of this API.rpy is to:
-Establish a connection to an external API
+Game Flow
 
-Send the chosen character/persona
+Start Screen
 
-Send the user's question
+Player is presented with a menu of characters.
 
-Receive the AI-generated answer   
+Character Selection
 
-Return that answer back into the Ren’Py script           
+Choosing Okello Paul opens a question screen.
 
-.
-.
-.
-.
+Choosing Character 2 presents a short explanatory dialogue.
 
-.
-.
+Question Input
+
+The player types a question using renpy.input.
+
+Splash / Loading Screen
+
+After submitting the question, a splash screen appears:
+
+“LET ME THINK”
+
+“ANSWER LOADING”
+
+This creates a pause and sense of processing before continuing.
+
+Features
+
+Character-based storytelling
+
+Interactive menu selection
+
+Player text input
+
+Splash screen with timed transitions
+
+Simple, modular Ren’Py labels for easy expansion
+
+Code Structure
+Characters
+define e = Character("Okello Paul")
+define pov = Character("[povname]")
+
+Key Labels
+
+start – Entry point of the game
+
+choices – Character selection menu
+
+choices1_a – Question input flow
+
+splashscreen – Loading / thinking animation
+
+choices1_b – Informational dialogue
+
+Splash Screen Behavior
+
+The splash screen is called after the player enters a question, using:
+
+call splashscreen
 
 
+It displays timed text transitions using Pause() and dissolve to simulate processing.
 
+Requirements
 
+Ren’Py 8.x or newer
 
-How It Works
+Desktop build
 
-The file defines a Python function called ask_backend().
+How to Run
 
-The game uses it like this:
+Install Ren’Py from https://www.renpy.org
 
-$ answer = ask_backend(question, chosen_character)
+Place the project folder inside the Ren’Py directory
 
-Sends a POST request to the backend
+Open Ren’Py Launcher
 
-Includes required headers + API key
+Select Digital Kazi
 
-Sends JSON containing the question & character
+Click Launch Project
 
-Returns the backend's response text
-
-
-
-
-.
-.
-.
-.
-.
-
-
-
-.
-
-.
-
-
-
-
-.
-.
-
-
-
-Usage Inside script.rpy
-
-label ask_question:
-    $ question = renpy.input("What do you want to ask?")
-    
-    $ answer = ask_backend(question, chosen_character)
-    
-    "Character [chosen_character] says:"
-    
-    "[answer]"
-    
-    jump ask_question
+To add assets to the game 
+add all images to the image folder 
+make sure the name in folder matches the name in code 
